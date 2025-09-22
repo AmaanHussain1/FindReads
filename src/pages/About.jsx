@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../components/NavBar';
+import Navbar from '/src/components/Navbar.jsx';
 
 const About = () => {
   return (
