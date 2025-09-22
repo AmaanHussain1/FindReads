@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from '/src/components/Navbar.jsx';
-import Loader from '/src/components/Loader.jsx';
+import Navbar from '../components/Navbar/NavBar';
+import Loader from '../components/Loader/Loader';;
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 
 const BookDetails = () => {

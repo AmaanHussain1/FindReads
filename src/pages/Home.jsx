@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
-import Navbar from '/src/components/Navbar.jsx';
-import Header from '/src/components/Header.jsx';
-import SearchBar from '/src/components/SearchBar.jsx';
-import BookCard from '/src/components/BookCard.jsx';
-import Loader from '/src/components/Loader.jsx';
+import Navbar from '../components/Navbar/NavBar';
+import Header from '../components/Header/Header';
+import SearchBar from '../components/Searchbar/SearchBar';
+import BookCard from '../components/Bookcard/BookCard';
+import Loader from '../components/Loader/Loader';
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
