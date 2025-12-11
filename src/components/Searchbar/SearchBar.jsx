@@ -19,7 +19,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, handleSearch }) => {
         />
         <button
           type="submit"
-          className="absolute right-0 top-0 h-full lg:px-5 px-3.5 text-gray-400 bg-blue-500 hover:bg-blue-700 rounded-r-xl hover:text-white focus:outline-none transition-colors duration-300"
+          className="absolute right-0 top-0 h-full lg:px-5 px-3.5 text-gray-300 bg-blue-500 hover:bg-blue-700 rounded-r-xl hover:text-white focus:outline-none transition-colors duration-300"
           aria-label="Search"
         >
           <Search

@@ -1,68 +1,121 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Library, X, AlignJustify } from 'lucide-react'; // Changed icon to Library
-import { gsap } from 'gsap';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Library, X, AlignJustify, LogOut } from 'lucide-react';
+import { UserAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navbarRef = useRef(null);
+  const { user, logout } = UserAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    gsap.set(navbarRef.current, { y: -100, opacity: 0 });
-    gsap.to(navbarRef.current, {
-      y: 0,
-      opacity: 1,
-      duration: 0.9,
-      ease: 'power3.out',
-    });
-  }, []);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+      setIsOpen(false); // Close mobile menu on logout
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
+  // Helper class for links to keep code clean
+  const linkClass = ({ isActive }) =>
+    `font-medium transition-colors duration-300 ${isActive ? 'text-blue-500' : 'text-gray-500 dark:text-gray-300 hover:text-blue-500'
+    }`;
+
   return (
-    <nav ref={navbarRef} className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-3 md:flex md:justify-between md:items-center">
+    <nav className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-300">
+      <div className="container mx-auto px-6 py-4">
+
+        {/* --- DESKTOP LAYOUT (Flex Container) --- */}
         <div className="flex justify-between items-center">
-          <NavLink to="/" className="flex items-center gap-2">
-            <Library className="text-blue-500" size={30} /> 
-            <span className="text-xl font-semibold text-gray-800 dark:text-white">
+
+          {/* 1. LEFT SIDE: Logo */}
+          <NavLink to="/" className="flex items-center gap-2 z-50">
+            <Library className="text-blue-500" size={30} />
+            <span className="text-xl font-bold text-gray-800 dark:text-white">
               Find<span className="text-blue-500">Reads</span>
             </span>
           </NavLink>
-          <div className="md:hidden">
+
+          {/* 2. CENTER: Navigation Links (Hidden on Mobile) */}
+          <div className="hidden md:flex items-center space-x-8">
+            <NavLink to="/" className={linkClass}>Home</NavLink>
+            <NavLink to="/about" className={linkClass}>About</NavLink>
+            {/* Show Favorites Link here if logged in or not*/}
+            <NavLink to="/favorites" className={linkClass}>My Favorites</NavLink>
+          </div>
+
+          {/* 3. RIGHT SIDE: Auth Buttons (Hidden on Mobile) */}
+          <div className="hidden md:flex items-center gap-4">
+            {user?.email ? (
+              <div className="flex items-center gap-4">
+                <span className="text-gray-400 text-sm">
+                  Hello, <span className="text-white font-semibold">{user.displayName || user.email.split('@')[0]}</span>
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+                >
+                  <LogOut size={18} /> Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <NavLink to="/login" className="text-gray-300 hover:text-white font-medium transition-colors">
+                  Sign In
+                </NavLink>
+                <NavLink to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors shadow-lg shadow-blue-500/30">
+                  Sign Up
+                </NavLink>
+              </div>
+            )}
+          </div>
+
+          {/* MOBILE TOGGLE BUTTON (Visible only on small screens) */}
+          <div className="md:hidden flex items-center">
             <button
-              onClick={toggleMenu}
-              type="button"
-              className="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-600 dark:text-gray-200 focus:outline-none"
             >
-              {isOpen ? <X size={20} /> : <AlignJustify size={20} />}
+              {isOpen ? <X size={28} /> : <AlignJustify size={28} />}
             </button>
           </div>
         </div>
-        <div className={`md:flex items-center ${isOpen ? 'block mt-4 md:mt-0' : 'hidden'}`}>
-          <div className="flex flex-col md:flex-row md:ml-6">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `my-2 md:my-0 md:mx-4 font-medium hover:text-blue-500 transition-colors duration-300 ${isActive ? 'text-blue-500' : 'text-gray-700 dark:text-gray-300'}`
-              }
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `my-2 md:my-0 md:mx-4 font-medium hover:text-blue-500 transition-colors duration-300 ${isActive ? 'text-blue-500' : 'text-gray-700 dark:text-gray-300'}`
-              }
-              onClick={() => setIsOpen(false)}
-            >
-              About
-            </NavLink>
+
+        {/* --- MOBILE MENU (Dropdown) --- */}
+        <div className={`${isOpen ? 'block' : 'hidden'} md:hidden mt-4 pb-4 bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm`}>
+          <div className="flex flex-col space-y-4">
+            <NavLink to="/" className={linkClass} onClick={() => setIsOpen(false)}>Home</NavLink>
+            <NavLink to="/about" className={linkClass} onClick={() => setIsOpen(false)}>About</NavLink>
+
+            {/* ALWAYS SHOW FAVORITES LINK NOW */}
+            <NavLink to="/favorites" className={linkClass} onClick={() => setIsOpen(false)}>My Favorites</NavLink>
+
+            <div className="border-t border-gray-700 my-2 pt-2">
+              {user?.email ? (
+                <div className="flex flex-col gap-4">
+                  <span className="text-gray-400 text-sm">
+                    Signed in as: <span className="text-white font-bold">{user.displayName || user.email}</span>
+                  </span>
+                  <button onClick={handleLogout} className="bg-red-500 text-white py-2 rounded-md">
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <NavLink to="/login" className="text-center text-white py-2 border border-gray-600 rounded-md" onClick={() => setIsOpen(false)}>
+                    Sign In
+                  </NavLink>
+                  <NavLink to="/signup" className="text-center bg-blue-600 text-white py-2 rounded-md" onClick={() => setIsOpen(false)}>
+                    Sign Up
+                  </NavLink>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
       </div>
     </nav>
   );
