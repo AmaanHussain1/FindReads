@@ -18,7 +18,6 @@ const Navbar = () => {
     }
   };
 
-  // Helper class for links to keep code clean
   const linkClass = ({ isActive }) =>
     `font-medium transition-colors duration-300 ${isActive ? 'text-blue-500' : 'text-gray-500 dark:text-gray-300 hover:text-blue-500'
     }`;
@@ -26,27 +25,25 @@ const Navbar = () => {
   return (
     <nav className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-6 py-4">
-
-        {/* --- DESKTOP LAYOUT (Flex Container) --- */}
         <div className="flex justify-between items-center">
 
-          {/* 1. LEFT SIDE: Logo */}
+          {/* LEFT SIDE: Logo */}
           <NavLink to="/" className="flex items-center gap-2 z-50">
             <Library className="text-blue-500" size={30} />
             <span className="text-xl font-bold text-gray-800 dark:text-white">
-              Find<span className="text-blue-500">Reads</span>
+              Book<span className="text-blue-500">Hunt</span>
             </span>
           </NavLink>
 
-          {/* 2. CENTER: Navigation Links (Hidden on Mobile) */}
+          {/* CENTER: Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <NavLink to="/" className={linkClass}>Home</NavLink>
             <NavLink to="/about" className={linkClass}>About</NavLink>
             {/* Show Favorites Link here if logged in or not*/}
-            <NavLink to="/favorites" className={linkClass}>My Favorites</NavLink>
+            <NavLink to="/collection" className={linkClass}>My Collection</NavLink>
           </div>
 
-          {/* 3. RIGHT SIDE: Auth Buttons (Hidden on Mobile) */}
+          {/* RIGHT SIDE: Auth Buttons */}
           <div className="hidden md:flex items-center gap-4">
             {user?.email ? (
               <div className="flex items-center gap-4">
@@ -83,14 +80,13 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* --- MOBILE MENU (Dropdown) --- */}
+        {/* --- MOBILE MENU --- */}
         <div className={`${isOpen ? 'block' : 'hidden'} md:hidden mt-4 pb-4 bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm`}>
           <div className="flex flex-col space-y-4">
             <NavLink to="/" className={linkClass} onClick={() => setIsOpen(false)}>Home</NavLink>
             <NavLink to="/about" className={linkClass} onClick={() => setIsOpen(false)}>About</NavLink>
 
-            {/* ALWAYS SHOW FAVORITES LINK NOW */}
-            <NavLink to="/favorites" className={linkClass} onClick={() => setIsOpen(false)}>My Favorites</NavLink>
+            <NavLink to="/collection" className={linkClass} onClick={() => setIsOpen(false)}>My Collection</NavLink>
 
             <div className="border-t border-gray-700 my-2 pt-2">
               {user?.email ? (

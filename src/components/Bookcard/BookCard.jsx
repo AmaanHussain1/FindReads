@@ -4,9 +4,12 @@ import { Heart } from 'lucide-react';
 import { UserAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/firebase';
 import { arrayUnion, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+import { useNotification } from '../../context/NotificationContext';
+
 
 const BookCard = ({ book }) => {
   const { user } = UserAuth();
+  const { showNotification } = useNotification();
   const [saved, setSaved] = useState(false);
 
   // Safe data extraction
@@ -18,13 +21,11 @@ const BookCard = ({ book }) => {
     e.preventDefault(); // Prevent Link navigation when clicking the heart
 
     if (user?.email) {
-      // 1. Reference the specific user's document in the database
+      // Reference the specific user's document in the database
       const userRef = doc(db, 'users', `${user.email}`);
       
       setSaved(true);
 
-      // 2. We use setDoc with merge: true to ensure the document exists
-      // If it doesn't exist, it creates it. If it does, it updates it.
       try {
         await setDoc(userRef, {
             savedBooks: arrayUnion({
@@ -35,19 +36,18 @@ const BookCard = ({ book }) => {
             })
         }, { merge: true });
         
-        // Optional: Add a toast notification here later
-        console.log("Book Saved!");
+        setSaved(true);
+        showNotification("Book added to favorites!", "success");
       } catch (error) {
-        console.log(error);
+        showNotification("Error saving book.", "error");
       }
     } else {
-      alert('Please log in to save a book to your favorites!');
+      showNotification("Please login to save books!", "error");
     }
   };
 
   return (
     <div className="relative group">
-       {/* The entire card is a Link, but the Heart button inside handles its own click */}
       <Link to={`/book/${book.id}`} key={book.id} className="block bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 ease-in-out">
         <div className="relative">
           <img
@@ -63,7 +63,7 @@ const BookCard = ({ book }) => {
         </div>
       </Link>
 
-      {/* HEART BUTTON - Floats on top of the image */}
+      {/* HEART BUTTON */}
       <div 
         onClick={saveBook}
         className="absolute top-2 right-2 cursor-pointer bg-gray-900/50 p-2 rounded-full hover:bg-gray-900 transition-colors z-10"

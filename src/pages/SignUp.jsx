@@ -5,7 +5,7 @@ import { UserAuth } from '../context/AuthContext';
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState(''); // <--- NEW STATE
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
 
   const { createUser } = UserAuth();
@@ -15,7 +15,6 @@ const SignUp = () => {
     e.preventDefault();
     setError('');
     try {
-      // Pass username as the 3rd argument
       await createUser(email, password, username);
       navigate('/');
     } catch (e) {
@@ -77,7 +76,7 @@ const SignUp = () => {
               </div>
 
               <p className="mt-8">
-                <span className="text-gray-400">Already subscribed to FindReads?</span>{' '}
+                <span className="text-gray-400">Already subscribed to ReadVault?</span>{' '}
                 <Link to='/login' className="text-blue-500 hover:underline">
                   Sign In
                 </Link>

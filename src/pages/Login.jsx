@@ -32,7 +32,7 @@ const Login = () => {
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-xs"></div>
 
-      {/* Content Container - Centered using Flexbox instead of Fixed */}
+      {/* Content Container */}
       <div className="relative w-full h-full flex items-center justify-center px-4 z-50">
         <div className="max-w-[450px] w-full bg-black/75 text-white rounded-lg shadow-2xl border border-gray-800 p-8">
           <div className="max-w-[320px] mx-auto">
@@ -65,7 +65,7 @@ const Login = () => {
               </div>
               
               <p className="mt-8">
-                <span className="text-gray-400">New to FindReads?</span>{' '}
+                <span className="text-gray-400">New to ReadVault?</span>{' '}
                 <Link to='/signup' className="text-blue-500 hover:underline">
                   Sign Up
                 </Link>
