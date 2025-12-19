@@ -65,7 +65,7 @@ const Login = () => {
               </div>
               
               <p className="mt-8">
-                <span className="text-gray-400">New to ReadVault?</span>{' '}
+                <span className="text-gray-400">New to BookHunt?</span>{' '}
                 <Link to='/signup' className="text-blue-500 hover:underline">
                   Sign Up
                 </Link>

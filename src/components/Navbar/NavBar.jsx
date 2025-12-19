@@ -2,21 +2,33 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Library, X, AlignJustify, LogOut } from 'lucide-react';
 import { UserAuth } from '../../context/AuthContext';
+import { useSearch } from '../../context/SearchContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = UserAuth();
+  const { resetSearch } = useSearch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logout();
       navigate('/');
-      setIsOpen(false); // Close mobile menu on logout
+      setIsOpen(false);
+      resetSearch(); 
     } catch (e) {
       console.log(e.message);
     }
   };
+
+  // THIS FUNCTION HANDLES NAVIGATION FOR HOME AND COLLECTION
+  const handleResetAndNav = () => {
+     resetSearch();       // Wipe search memory
+     setIsOpen(false);    // Close mobile menu
+  };
+
+  // Helper for links (About, Login) that don't need to reset search
+  const closeMenu = () => setIsOpen(false);
 
   const linkClass = ({ isActive }) =>
     `font-medium transition-colors duration-300 ${isActive ? 'text-blue-500' : 'text-gray-500 dark:text-gray-300 hover:text-blue-500'
@@ -28,19 +40,20 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
 
           {/* LEFT SIDE: Logo */}
-          <NavLink to="/" className="flex items-center gap-2 z-50">
+          <NavLink to="/" onClick={handleResetAndNav} className="flex items-center gap-2 z-50">
             <Library className="text-blue-500" size={30} />
             <span className="text-xl font-bold text-gray-800 dark:text-white">
               Book<span className="text-blue-500">Hunt</span>
             </span>
           </NavLink>
 
-          {/* CENTER: Navigation Links */}
+          {/* CENTER: Navigation Links (Desktop) */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink to="/" className={linkClass}>Home</NavLink>
+            <NavLink to="/" onClick={handleResetAndNav} className={linkClass}>Home</NavLink>
+            
             <NavLink to="/about" className={linkClass}>About</NavLink>
-            {/* Show Favorites Link here if logged in or not*/}
-            <NavLink to="/collection" className={linkClass}>My Collection</NavLink>
+            
+            <NavLink to="/collection" onClick={handleResetAndNav} className={linkClass}>My Collection</NavLink>
           </div>
 
           {/* RIGHT SIDE: Auth Buttons */}
@@ -69,7 +82,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* MOBILE TOGGLE BUTTON (Visible only on small screens) */}
+          {/* MOBILE TOGGLE BUTTON */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -83,10 +96,18 @@ const Navbar = () => {
         {/* --- MOBILE MENU --- */}
         <div className={`${isOpen ? 'block' : 'hidden'} md:hidden mt-4 pb-4 bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm`}>
           <div className="flex flex-col space-y-4">
-            <NavLink to="/" className={linkClass} onClick={() => setIsOpen(false)}>Home</NavLink>
-            <NavLink to="/about" className={linkClass} onClick={() => setIsOpen(false)}>About</NavLink>
+            
+            <NavLink to="/" className={linkClass} onClick={handleResetAndNav}>
+                Home
+            </NavLink>
 
-            <NavLink to="/collection" className={linkClass} onClick={() => setIsOpen(false)}>My Collection</NavLink>
+            <NavLink to="/about" className={linkClass} onClick={closeMenu}>
+                About
+            </NavLink>
+
+            <NavLink to="/collection" className={linkClass} onClick={handleResetAndNav}>
+                My Collection
+            </NavLink>
 
             <div className="border-t border-gray-700 my-2 pt-2">
               {user?.email ? (
@@ -100,10 +121,10 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <NavLink to="/login" className="text-center text-white py-2 border border-gray-600 rounded-md" onClick={() => setIsOpen(false)}>
+                  <NavLink to="/login" className="text-center text-white py-2 border border-gray-600 rounded-md" onClick={closeMenu}>
                     Sign In
                   </NavLink>
-                  <NavLink to="/signup" className="text-center bg-blue-600 text-white py-2 rounded-md" onClick={() => setIsOpen(false)}>
+                  <NavLink to="/signup" className="text-center bg-blue-600 text-white py-2 rounded-md" onClick={closeMenu}>
                     Sign Up
                   </NavLink>
                 </div>

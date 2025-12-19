@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar/NavBar';
 
 const About = () => {
+
   return (
     <div className="bg-gray-900 min-h-screen text-white">
       <Navbar />

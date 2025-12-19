@@ -76,7 +76,7 @@ const SignUp = () => {
               </div>
 
               <p className="mt-8">
-                <span className="text-gray-400">Already subscribed to ReadVault?</span>{' '}
+                <span className="text-gray-400">Already subscribed to BookHunt?</span>{' '}
                 <Link to='/login' className="text-blue-500 hover:underline">
                   Sign In
                 </Link>
