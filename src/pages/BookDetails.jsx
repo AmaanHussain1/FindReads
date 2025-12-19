@@ -82,9 +82,12 @@ const BookDetails = () => {
       };
 
       try {
-        await updateDoc(userRef, {
+        // CHANGED FROM updateDoc TO setDoc WITH MERGE
+        // This will create the user document if it doesn't exist yet!
+        await setDoc(userRef, {
           savedBooks: arrayUnion(bookData)
-        });
+        }, { merge: true });
+        
         showNotification('Added to your collection!', 'success');
       } catch (error) {
         console.log(error);
