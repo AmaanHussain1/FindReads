@@ -5,10 +5,17 @@ import Header from '../components/Header/Header';
 import SearchBar from '../components/Searchbar/SearchBar';
 import BookCard from '../components/Bookcard/BookCard';
 import Loader from '../components/Loader/Loader';
+import { useSearch } from '../context/SearchContext';
 
 const Home = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [books, setBooks] = useState([]);
+  
+  const { 
+    searchResults: books,      // Rename context 'searchResults' to 'books'
+    setSearchResults: setBooks, 
+    lastQuery: searchTerm,     // Rename context 'lastQuery' to 'searchTerm'
+    setLastQuery: setSearchTerm 
+  } = useSearch();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -19,19 +26,21 @@ const Home = () => {
 
     setLoading(true);
     setError(null);
-    setBooks([]);
-
+    
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&key=${API_KEY}&maxResults=20`
+        `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&key=${API_KEY}&maxResults=40`
       );
+      
+      // Save to Global Context (Memory)
       setBooks(response.data.items || []);
+      
     } catch (err) {
       setError('Failed to fetch books. Please try again later.');
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, API_KEY]);
+  }, [searchTerm, API_KEY, setBooks]); // Added setBooks to dependencies
 
   const handleSearch = () => {
     if (searchTerm.trim() !== '') {
@@ -48,7 +57,9 @@ const Home = () => {
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <Header />
+          
           <div className="mt-8">
+            {/* SEARCHBAR COMPONENT */}
             <SearchBar
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -58,12 +69,15 @@ const Home = () => {
 
           <div className="mt-12">
             {loading && <Loader />}
+            
             {error && <p className="text-center text-red-500 dark:text-red-400 text-lg">{error}</p>}
+            
             {!loading && !error && books.length === 0 && searchTerm && (
               <p className="text-center text-gray-600 dark:text-gray-400 text-lg">
                 No books found for your query.
               </p>
             )}
+            
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {books.map((book) => (
                 <BookCard key={book.id} book={book} />
@@ -76,4 +90,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home; 
